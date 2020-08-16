@@ -1,6 +1,7 @@
 package ru.pb.web;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -15,10 +16,10 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertEquals;
 
 public class MarketTest {
-    public WebDriver driver;
-    public WebDriverWait wait;
+    private WebDriver driver;
+    private WebDriverWait wait;
     private final String marketUrl = "https://market.yandex.ru/";
-    private final String buttonRegionText = "Да, спасибо";
+    private final String buttonRegionLocator = "//*[text()='Да, спасибо']";
     private final int productCount = 5;
     private final int productindex = 1;
     private final String brandName = "Samsung";
@@ -36,28 +37,28 @@ public class MarketTest {
         driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
     }
 
+    @Before
+    public void loadStartPage() {
+        setUpDriver();
+        driver.get(marketUrl);
+        wait = new WebDriverWait(driver, 20);
+        //Select region
+        driver.findElement(By.xpath(buttonRegionLocator)).click();
+    }
+
     @After
     public void tearDown() {
         driver.quit();
     }
 
-    private void loadStartPage() {
-        driver.get(marketUrl);
-        wait = new WebDriverWait(driver, 20);
-        //Select region
-        driver.findElement(By.xpath("//*[text()='" + buttonRegionText + "']")).click();
-    }
-
     @Test
     public void shouldFindProductByName() {
-        setUpDriver();
-        loadStartPage();
         TabletsPage tabletsPage = new TabletsPage(driver, wait);
         tabletsPage.openPage();
-        tabletsPage.selectProducts();
+        tabletsPage.selectProductsByFilter();
         tabletsPage.writeLog(productCount);
-        Product expectedProduct = tabletsPage.getProduct(productindex);
-        tabletsPage.searchProduct(expectedProduct.getName());
-        assertEquals(expectedProduct, tabletsPage.getProduct(0));
+        Product expectedProduct = tabletsPage.getProductByIndex(productindex);
+        Product searchedProduct = tabletsPage.firstSearchedProduct(expectedProduct.getName());
+        assertEquals(expectedProduct, searchedProduct);
     }
 }

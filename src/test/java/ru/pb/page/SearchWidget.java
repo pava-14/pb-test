@@ -1,23 +1,20 @@
 package ru.pb.page;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
 
 public class SearchWidget {
     private WebDriver driver;
-    @FindBy(css = "input[id=header-search]")
-    private WebElement requestInput;
-    @FindBy(css = "[action=\"/search\"] button[type=submit]")
-    private WebElement searchButton;
+    private String searchButtonLocator = "[action=\"/search\"] button[type=submit]";
+    private String inputLocator = "input[id=header-search]";
 
     public SearchWidget(WebDriver driver) {
         this.driver = driver;
     }
 
     public void searchFor(String request) {
-        requestInput.clear();
-        requestInput.sendKeys(request);
-        searchButton.click();
+        driver.findElement(By.cssSelector(inputLocator)).clear();
+        driver.findElement(By.cssSelector(inputLocator)).sendKeys(request);
+        driver.findElement(By.cssSelector(searchButtonLocator)).click();
     }
 }

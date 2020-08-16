@@ -2,41 +2,22 @@ package ru.pb.page;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.pb.data.Product;
-
-import java.util.List;
 
 public class TabletsPage {
     private WebDriver driver;
     private WebDriverWait wait;
     private final String brandName = "Samsung";
     private final String sortType = "по цене";
-//    private final String linkComputersText = "Компьютеры";
-//    private final String linkTabletsText = "Планшеты";
-    @FindBy(xpath = "//*[text()='Компьютеры']")
-    public WebElement linksComputers;
-    @FindBy(xpath = "//*[text()='Планшеты']")
-    private WebElement linkTablets;
-//    @FindBy(xpath = "//*[text()='\" + linkComputersText + \"']")
-//    private WebElement linksComputers;
-//    @FindBy(xpath = "//*[text()='\" + linkTabletsText + \"']")
-//    private WebElement linkTablets;
-    @FindBy(css = "div[data-reactroot] h1")
-    private WebElement searchHeader;
-    @FindBy(xpath = "//*[text()='\" + brandName + \"']")
-    private WebElement checkboxBrand;
-    @FindBy(xpath = "//*[text()='\" + sortType + \"']")
-    private WebElement checkboxPrice;
-    @FindBy(css = "[data-autotest-id=product-snippet] [data-zone-name=title]")
-    private List<WebElement> titleList;
-    @FindBy(css = "[data-autotest-id=product-snippet] [data-zone-name=price]")
-    private List<WebElement> priceList;
-    @FindBy(css = "title")
-    private WebElement pageTitle;
+    private final String linkComputersText = "Компьютеры";
+    private final String linkTabletsText = "Планшеты";
+    private String titleListLocator = "[data-autotest-id=product-snippet] [data-zone-name=title]";
+    private String priceListLocator = "[data-autotest-id=product-snippet] [data-zone-name=price]";
+    private String computersPageLocator = "//*[text()='Компьютерная техника']";
+    private String searchHeaderLocator = "div[data-reactroot] h1";
+    private String queryCaption = "Нашли, что искали?";
 
     public TabletsPage(final WebDriver driver, final WebDriverWait wait) {
         this.driver = driver;
@@ -44,35 +25,45 @@ public class TabletsPage {
     }
 
     public void openPage() {
-        linksComputers.click();
-        linkTablets.click();
+        driver.findElement(By.xpath("//*[text()='" + linkComputersText + "']")).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(computersPageLocator)));
+        driver.findElement(By.xpath("//*[text()='" + linkTabletsText + "']")).click();
     }
 
-    public void selectProducts() {
-        checkboxBrand.click();
-        checkboxPrice.click();
-        wait.until(ExpectedConditions.textToBePresentInElement(searchHeader, brandName));
+    public void selectProductsByFilter() {
+        driver.findElement(By.xpath("//*[text()='" + brandName + "']")).click();
+        wait.until(ExpectedConditions.textToBePresentInElement(
+                driver.findElement(By.cssSelector(searchHeaderLocator)), brandName));
+        driver.findElement(By.xpath("//*[text()='" + sortType + "']")).click();
     }
 
-    public void writeLog (int logCount){
+    public void writeLog(int logCount) {
         int count = logCount;
-        if (titleList.size() < count) {
-            count = titleList.size();
+        int currentCount = driver.findElements(By.cssSelector(titleListLocator)).size();
+        if (currentCount < count) {
+            count = currentCount;
         }
         int index = 0;
         while (index < count) {
-            System.out.println(titleList.get(index).getText() + " " + priceList.get(index).getText());
+            System.out.println(
+                    driver.findElements(By.cssSelector(titleListLocator)).get(index).getText() + " " +
+                            driver.findElements(By.cssSelector(priceListLocator)).get(index).getText());
             index++;
         }
     }
 
-    public Product getProduct(int productIndex) {
-        return new Product(titleList.get(productIndex).getText(), priceList.get(productIndex).getText());
+    public Product getProductByIndex(int productIndex) {
+        return new Product(
+                driver.findElements(By.cssSelector(titleListLocator)).get(productIndex).getText(),
+                driver.findElements(By.cssSelector(priceListLocator)).get(productIndex).getText());
     }
 
-    public void searchProduct (String productName) {
+    public Product firstSearchedProduct(String productNameForSearch) {
         SearchWidget searchWidget = new SearchWidget(driver);
-        searchWidget.searchFor(productName);
-        wait.until(ExpectedConditions.textToBePresentInElement(pageTitle, productName));
+        searchWidget.searchFor(productNameForSearch);
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[text()='" + queryCaption + "']")));
+        return new Product(
+                driver.findElements(By.cssSelector(titleListLocator)).get(0).getText(),
+                driver.findElements(By.cssSelector(priceListLocator)).get(0).getText());
     }
 }
