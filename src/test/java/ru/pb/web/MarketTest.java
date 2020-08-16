@@ -1,51 +1,63 @@
 package ru.pb.web;
 
+import org.junit.After;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import ru.pb.data.Product;
+import ru.pb.page.TabletsPage;
 
-import static org.junit.Assert.*;
+import java.util.concurrent.TimeUnit;
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
 public class MarketTest {
-    private WebDriver driver;
+    public WebDriver driver;
+    public WebDriverWait wait;
     private final String marketUrl = "https://market.yandex.ru/";
+    private final String buttonRegionText = "Да, спасибо";
+    private final int productCount = 5;
+    private final int productindex = 1;
+    private final String brandName = "Samsung";
+    private final String sortType = "по цене";
 
-    void setUpDriver() {
+    private void setUpDriver() {
         System.setProperty("webdriver.chrome.driver", ".\\webdriver\\chromedriver.exe");
         if (System.getProperty("os.name").contains("nux")) {
             System.setProperty("webdriver.chrome.driver", "./webdriver/chromedriver");
         }
         ChromeOptions options = new ChromeOptions();
-//        options.addArguments("--headless");
+        // Needs for CI, but Market restrict
+        //options.addArguments("--headless");
         driver = new ChromeDriver(options);
+        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
     }
 
-    void tearDown() {
+    @After
+    public void tearDown() {
         driver.quit();
+    }
+
+    private void loadStartPage() {
+        driver.get(marketUrl);
+        wait = new WebDriverWait(driver, 20);
+        //Select region
+        driver.findElement(By.xpath("//*[text()='" + buttonRegionText + "']")).click();
     }
 
     @Test
     public void shouldFindProductByName() {
         setUpDriver();
-        driver.get(marketUrl);
-//        String title = driver.getTitle();
-//        WebElement tablist = driver.findElement(By.cssSelector("[role=tablist]"));
-        driver.findElement(By.xpath("//*[text()='Да, спасибо']")).click();
-        driver.findElement(By.xpath("//*[text()='Компьютеры']")).click();
-        assertTrue(driver.findElement(By.xpath("//*[text()='Компьютерная техника']")).isDisplayed());
-        driver.findElement(By.xpath("//*[text()='Планшеты']")).click();
-        driver.findElement(By.xpath("//*[text()='Samsung']")).click();
-        driver.findElement(By.xpath("//*[text()='по цене']")).click();
-
-        List<WebElement> productList = driver.findElements(By.cssSelector("[data-autotest-id=product-snippet]"));
-        WebElement product = productList.get(0);
-        product.findElement(By.cssSelector([data-zone-name=title]))
-
-        tearDown();
+        loadStartPage();
+        TabletsPage tabletsPage = new TabletsPage(driver, wait);
+        tabletsPage.openPage();
+        tabletsPage.selectProducts();
+        tabletsPage.writeLog(productCount);
+        Product expectedProduct = tabletsPage.getProduct(productindex);
+        tabletsPage.searchProduct(expectedProduct.getName());
+        assertEquals(expectedProduct, tabletsPage.getProduct(0));
     }
 }

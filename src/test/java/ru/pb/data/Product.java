@@ -1,9 +1,11 @@
 package ru.pb.data;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class Product {
     private String name;
-    private long price;
+    private String price;
 }
