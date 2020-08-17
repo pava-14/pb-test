@@ -24,20 +24,22 @@ public class TabletsPage {
         this.wait = wait;
     }
 
-    public void openPage() {
+    public TabletsPage openPage() {
         driver.findElement(By.xpath("//*[text()='" + linkComputersText + "']")).click();
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(computersPageLocator)));
         driver.findElement(By.xpath("//*[text()='" + linkTabletsText + "']")).click();
+        return this;
     }
 
-    public void selectProductsByFilter() {
+    public TabletsPage selectProductsByFilter() {
         driver.findElement(By.xpath("//*[text()='" + brandName + "']")).click();
         wait.until(ExpectedConditions.textToBePresentInElement(
                 driver.findElement(By.cssSelector(searchHeaderLocator)), brandName));
         driver.findElement(By.xpath("//*[text()='" + sortType + "']")).click();
+        return this;
     }
 
-    public void writeLog(int logCount) {
+    public TabletsPage writeLog(int logCount) {
         int count = logCount;
         int currentCount = driver.findElements(By.cssSelector(titleListLocator)).size();
         if (currentCount < count) {
@@ -50,6 +52,7 @@ public class TabletsPage {
                             driver.findElements(By.cssSelector(priceListLocator)).get(index).getText());
             index++;
         }
+        return this;
     }
 
     public Product getProductByIndex(int productIndex) {

@@ -53,10 +53,10 @@ public class MarketTest {
 
     @Test
     public void shouldFindProductByName() {
-        TabletsPage tabletsPage = new TabletsPage(driver, wait);
-        tabletsPage.openPage();
-        tabletsPage.selectProductsByFilter();
-        tabletsPage.writeLog(productCount);
+        TabletsPage tabletsPage = new TabletsPage(driver, wait)
+                .openPage()
+                .selectProductsByFilter()
+                .writeLog(productCount);
         Product expectedProduct = tabletsPage.getProductByIndex(productindex);
         Product searchedProduct = tabletsPage.firstSearchedProduct(expectedProduct.getName());
         assertEquals(expectedProduct, searchedProduct);
