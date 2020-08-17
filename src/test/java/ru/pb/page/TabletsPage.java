@@ -15,9 +15,10 @@ public class TabletsPage {
     private final String linkTabletsText = "Планшеты";
     private String titleListLocator = "[data-autotest-id=product-snippet] [data-zone-name=title]";
     private String priceListLocator = "[data-autotest-id=product-snippet] [data-zone-name=price]";
-    private String computersPageLocator = "//*[text()='Компьютерная техника']";
+    private String computersPageCaption = "Компьютерная техника";
     private String searchHeaderLocator = "div[data-reactroot] h1";
     private String queryCaption = "Нашли, что искали?";
+    private String xptext = "//*[text()='%s']";
 
     public TabletsPage(final WebDriver driver, final WebDriverWait wait) {
         this.driver = driver;
@@ -25,17 +26,17 @@ public class TabletsPage {
     }
 
     public TabletsPage openPage() {
-        driver.findElement(By.xpath("//*[text()='" + linkComputersText + "']")).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(computersPageLocator)));
-        driver.findElement(By.xpath("//*[text()='" + linkTabletsText + "']")).click();
+        driver.findElement(By.xpath(String.format(xptext, linkComputersText))).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format(xptext, computersPageCaption))));
+        driver.findElement(By.xpath(String.format(xptext, linkTabletsText))).click();
         return this;
     }
 
     public TabletsPage selectProductsByFilter() {
-        driver.findElement(By.xpath("//*[text()='" + brandName + "']")).click();
+        driver.findElement(By.xpath(String.format(xptext, brandName))).click();
         wait.until(ExpectedConditions.textToBePresentInElement(
                 driver.findElement(By.cssSelector(searchHeaderLocator)), brandName));
-        driver.findElement(By.xpath("//*[text()='" + sortType + "']")).click();
+        driver.findElement(By.xpath(String.format(xptext, sortType))).click();
         return this;
     }
 
@@ -64,7 +65,7 @@ public class TabletsPage {
     public Product firstSearchedProduct(String productNameForSearch) {
         SearchWidget searchWidget = new SearchWidget(driver);
         searchWidget.searchFor(productNameForSearch);
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[text()='" + queryCaption + "']")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format(xptext, queryCaption))));
         return new Product(
                 driver.findElements(By.cssSelector(titleListLocator)).get(0).getText(),
                 driver.findElements(By.cssSelector(priceListLocator)).get(0).getText());
