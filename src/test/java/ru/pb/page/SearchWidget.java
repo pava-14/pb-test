@@ -12,9 +12,10 @@ public class SearchWidget {
         this.driver = driver;
     }
 
-    public void searchFor(String request) {
+    public SearchWidget searchFor(String request) {
         driver.findElement(By.cssSelector(inputLocator)).clear();
         driver.findElement(By.cssSelector(inputLocator)).sendKeys(request);
         driver.findElement(By.cssSelector(searchButtonLocator)).click();
+        return this;
     }
 }

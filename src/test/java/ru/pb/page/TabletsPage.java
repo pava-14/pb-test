@@ -63,8 +63,8 @@ public class TabletsPage {
     }
 
     public Product firstSearchedProduct(String productNameForSearch) {
-        SearchWidget searchWidget = new SearchWidget(driver);
-        searchWidget.searchFor(productNameForSearch);
+        SearchWidget searchWidget = new SearchWidget(driver)
+                .searchFor(productNameForSearch);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format(xptext, queryCaption))));
         return new Product(
                 driver.findElements(By.cssSelector(titleListLocator)).get(0).getText(),
