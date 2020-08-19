@@ -1,4 +1,4 @@
-package ru.pb.page;
+package ru.pb.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -12,9 +12,9 @@ public class SearchWidget {
         this.driver = driver;
     }
 
-    public void searchFor(String request) {
+    public void searchFor(String searchRequest) {
         driver.findElement(By.cssSelector(inputLocator)).clear();
-        driver.findElement(By.cssSelector(inputLocator)).sendKeys(request);
+        driver.findElement(By.cssSelector(inputLocator)).sendKeys(searchRequest);
         driver.findElement(By.cssSelector(searchButtonLocator)).click();
     }
 }

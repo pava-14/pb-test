@@ -1,15 +1,15 @@
-package ru.pb.web;
+package ru.pb.tests;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.pb.data.Product;
-import ru.pb.page.TabletsPage;
+import ru.pb.pages.HomePage;
+import ru.pb.pages.TabletsPage;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,16 +19,15 @@ public class MarketTest {
     private WebDriver driver;
     private WebDriverWait wait;
     private final String marketUrl = "https://market.yandex.ru/";
-    private final String buttonRegionLocator = "//*[text()='Да, спасибо']";
     private final int productCount = 5;
     private final int productindex = 1;
     private final String brandName = "Samsung";
-    private final String sortType = "по цене";
 
     private void setUpDriver() {
-        System.setProperty("webdriver.chrome.driver", ".\\webdriver\\chromedriver.exe");
         if (System.getProperty("os.name").contains("nux")) {
             System.setProperty("webdriver.chrome.driver", "./webdriver/chromedriver");
+        } else {
+            System.setProperty("webdriver.chrome.driver", ".\\webdriver\\chromedriver.exe");
         }
         ChromeOptions options = new ChromeOptions();
         // Needs for CI, but Market restrict
@@ -42,8 +41,6 @@ public class MarketTest {
         setUpDriver();
         driver.get(marketUrl);
         wait = new WebDriverWait(driver, 20);
-        //Select region
-        driver.findElement(By.xpath(buttonRegionLocator)).click();
     }
 
     @After
@@ -53,12 +50,12 @@ public class MarketTest {
 
     @Test
     public void shouldFindProductByName() {
-        TabletsPage tabletsPage = new TabletsPage(driver, wait)
-                .openPage()
-                .selectProductsByFilter()
-                .writeLog(productCount);
+        HomePage homePage = new HomePage(driver, wait);
+        TabletsPage tabletsPage = homePage.openPageTablets()
+                .selectProductsByBrand(brandName)
+                .writeToLog(productCount);
         Product expectedProduct = tabletsPage.getProductByIndex(productindex);
-        Product searchedProduct = tabletsPage.firstSearchedProduct(expectedProduct.getName());
+        Product searchedProduct = tabletsPage.getFirstSearchedProduct(expectedProduct.getName());
         assertEquals(expectedProduct, searchedProduct);
     }
 }

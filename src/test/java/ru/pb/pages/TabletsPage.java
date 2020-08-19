@@ -1,4 +1,4 @@
-package ru.pb.page;
+package ru.pb.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -9,30 +9,20 @@ import ru.pb.data.Product;
 public class TabletsPage {
     private WebDriver driver;
     private WebDriverWait wait;
-    private final String brandName = "Samsung";
     private final String sortType = "по цене";
-    private final String linkComputersText = "Компьютеры";
-    private final String linkTabletsText = "Планшеты";
-    private String titleListLocator = "[data-autotest-id=product-snippet] [data-zone-name=title]";
-    private String priceListLocator = "[data-autotest-id=product-snippet] [data-zone-name=price]";
-    private String computersPageCaption = "Компьютерная техника";
-    private String searchHeaderLocator = "div[data-reactroot] h1";
-    private String queryCaption = "Нашли, что искали?";
-    private String xptext = "//*[text()='%s']";
+    private final String titleListLocator = "[data-autotest-id=product-snippet] [data-zone-name=title]";
+    private final String priceListLocator = "[data-autotest-id=product-snippet] [data-zone-name=price]";
+    private final String computersPageCaption = "Компьютерная техника";
+    private final String searchHeaderLocator = "div[data-reactroot] h1";
+    private final String queryCaption = "Нашли, что искали?";
+    private final String xptext = "//*[text()='%s']";
 
     public TabletsPage(final WebDriver driver, final WebDriverWait wait) {
         this.driver = driver;
         this.wait = wait;
     }
 
-    public TabletsPage openPage() {
-        driver.findElement(By.xpath(String.format(xptext, linkComputersText))).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format(xptext, computersPageCaption))));
-        driver.findElement(By.xpath(String.format(xptext, linkTabletsText))).click();
-        return this;
-    }
-
-    public TabletsPage selectProductsByFilter() {
+    public TabletsPage selectProductsByBrand(String brandName) {
         driver.findElement(By.xpath(String.format(xptext, brandName))).click();
         wait.until(ExpectedConditions.textToBePresentInElement(
                 driver.findElement(By.cssSelector(searchHeaderLocator)), brandName));
@@ -40,18 +30,17 @@ public class TabletsPage {
         return this;
     }
 
-    public TabletsPage writeLog(int logCount) {
+    public TabletsPage writeToLog(int logCount) {
         int count = logCount;
         int currentCount = driver.findElements(By.cssSelector(titleListLocator)).size();
         if (currentCount < count) {
             count = currentCount;
         }
-        int index = 0;
-        while (index < count) {
+
+        for (int index = 0; index < count; index++) {
             System.out.println(
                     driver.findElements(By.cssSelector(titleListLocator)).get(index).getText() + " " +
                             driver.findElements(By.cssSelector(priceListLocator)).get(index).getText());
-            index++;
         }
         return this;
     }
@@ -62,7 +51,7 @@ public class TabletsPage {
                 driver.findElements(By.cssSelector(priceListLocator)).get(productIndex).getText());
     }
 
-    public Product firstSearchedProduct(String productNameForSearch) {
+    public Product getFirstSearchedProduct(String productNameForSearch) {
         SearchWidget searchWidget = new SearchWidget(driver);
         searchWidget.searchFor(productNameForSearch);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format(xptext, queryCaption))));
