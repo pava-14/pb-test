@@ -1,26 +1,22 @@
 package ru.pb.pages;
 
+import lombok.AllArgsConstructor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.pb.data.Product;
 
+@AllArgsConstructor
 public class TabletsPage {
     private WebDriver driver;
     private WebDriverWait wait;
     private final String sortType = "по цене";
     private final String titleListLocator = "[data-autotest-id=product-snippet] [data-zone-name=title]";
     private final String priceListLocator = "[data-autotest-id=product-snippet] [data-zone-name=price]";
-    private final String computersPageCaption = "Компьютерная техника";
     private final String searchHeaderLocator = "div[data-reactroot] h1";
     private final String queryCaption = "Нашли, что искали?";
     private final String xptext = "//*[text()='%s']";
-
-    public TabletsPage(final WebDriver driver, final WebDriverWait wait) {
-        this.driver = driver;
-        this.wait = wait;
-    }
 
     public TabletsPage selectProductsByBrand(String brandName) {
         driver.findElement(By.xpath(String.format(xptext, brandName))).click();
