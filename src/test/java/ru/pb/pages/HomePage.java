@@ -1,12 +1,10 @@
 package ru.pb.pages;
 
-import lombok.AllArgsConstructor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-@AllArgsConstructor
 public class HomePage {
     private WebDriver driver;
     private WebDriverWait wait;
@@ -15,6 +13,11 @@ public class HomePage {
     private final String linkComputersText = "Компьютеры";
     private final String linkTabletsText = "Планшеты";
     private final String buttonRegionLocator = "//*[text()='Да, спасибо']";
+
+    public HomePage(WebDriver driver, WebDriverWait wait) {
+        this.driver = driver;
+        this.wait = wait;
+    }
 
     public TabletsPage openPageTablets() {
         //Select region

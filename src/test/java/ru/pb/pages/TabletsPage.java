@@ -1,13 +1,11 @@
 package ru.pb.pages;
 
-import lombok.AllArgsConstructor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.pb.data.Product;
 
-@AllArgsConstructor
 public class TabletsPage {
     private WebDriver driver;
     private WebDriverWait wait;
@@ -17,12 +15,20 @@ public class TabletsPage {
     private final String searchHeaderLocator = "div[data-reactroot] h1";
     private final String queryCaption = "Нашли, что искали?";
     private final String xptext = "//*[text()='%s']";
+    private final String priceSortCation = "дёшево";
+
+    public TabletsPage(WebDriver driver, WebDriverWait wait) {
+        this.driver = driver;
+        this.wait = wait;
+    }
 
     public TabletsPage selectProductsByBrand(String brandName) {
         driver.findElement(By.xpath(String.format(xptext, brandName))).click();
         wait.until(ExpectedConditions.textToBePresentInElement(
                 driver.findElement(By.cssSelector(searchHeaderLocator)), brandName));
         driver.findElement(By.xpath(String.format(xptext, sortType))).click();
+        wait.until(ExpectedConditions.textToBePresentInElement(
+                driver.findElement(By.cssSelector(searchHeaderLocator)), priceSortCation));
         return this;
     }
 
@@ -50,6 +56,8 @@ public class TabletsPage {
     public Product getFirstSearchedProduct(String productNameForSearch) {
         SearchWidget searchWidget = new SearchWidget(driver);
         searchWidget.searchFor(productNameForSearch);
+//        wait.until(ExpectedConditions.textToBePresentInElement(
+//                driver.findElement(By.cssSelector(searchHeaderLocator)), "Планшеты в"));
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format(xptext, queryCaption))));
         return new Product(
                 driver.findElements(By.cssSelector(titleListLocator)).get(0).getText(),
