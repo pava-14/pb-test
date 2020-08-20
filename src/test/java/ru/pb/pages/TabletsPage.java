@@ -56,8 +56,6 @@ public class TabletsPage {
     public Product getFirstSearchedProduct(String productNameForSearch) {
         SearchWidget searchWidget = new SearchWidget(driver);
         searchWidget.searchFor(productNameForSearch);
-//        wait.until(ExpectedConditions.textToBePresentInElement(
-//                driver.findElement(By.cssSelector(searchHeaderLocator)), "Планшеты в"));
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(String.format(xptext, queryCaption))));
         return new Product(
                 driver.findElements(By.cssSelector(titleListLocator)).get(0).getText(),
