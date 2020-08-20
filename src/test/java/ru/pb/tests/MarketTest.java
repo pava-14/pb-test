@@ -56,7 +56,6 @@ public class MarketTest {
                 .writeToLog(productCount);
         Product expectedProduct = tabletsPage.getProductByIndex(productindex);
         Product searchedProduct = tabletsPage.getFirstSearchedProduct(expectedProduct.getName());
-        assertEquals(expectedProduct.getName(), searchedProduct.getName());
-        assertEquals(expectedProduct.getPrice(), searchedProduct.getPrice());
+        assertEquals(expectedProduct, searchedProduct);
     }
 }
